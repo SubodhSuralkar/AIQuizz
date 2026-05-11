@@ -426,12 +426,18 @@ def validate_api_key(key):
 
 
 # ── Helper: get Gemini model ──────────────────────────────────────────────────
-    def get_model():
-    # Update the model string to a 2026-supported version
-    # 'gemini-3-flash-preview' is the current high-performance choice
-    genai.configure(api_key=st.session_state.api_key)
-    return genai.GenerativeModel("gemini-3-flash-preview")
-
+def get_model():
+    if not st.session_state.api_key:
+        st.error("Please enter an API Key first.")
+        return None
+    
+    try:
+        genai.configure(api_key=st.session_state.api_key)
+        # Using the newest stable 2026 model name
+        return genai.GenerativeModel("gemini-3-flash-preview")
+    except Exception as e:
+        st.error(f"Failed to initialize model: {e}")
+        return None
 # ── Helper: get topic index ───────────────────────────────────────────────────
 def get_topic_index(text: str) -> list[str]:
     """Send first+last 5000 chars to Gemini; get back granular JSON topic list."""
