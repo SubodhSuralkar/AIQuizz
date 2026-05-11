@@ -7,7 +7,7 @@ import io
 # ── Page config ──────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="SSC CGL Prep AI",
-    page_icon="🎯",
+    page_icon="💩",
     layout="wide",
     initial_sidebar_state="expanded",
 )
