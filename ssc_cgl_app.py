@@ -426,10 +426,11 @@ def validate_api_key(key):
 
 
 # ── Helper: get Gemini model ──────────────────────────────────────────────────
-def get_model():
+    def get_model():
+    # Update the model string to a 2026-supported version
+    # 'gemini-3-flash-preview' is the current high-performance choice
     genai.configure(api_key=st.session_state.api_key)
-    return genai.GenerativeModel("gemini-1.5-flash")
-
+    return genai.GenerativeModel("gemini-3-flash-preview")
 
 # ── Helper: get topic index ───────────────────────────────────────────────────
 def get_topic_index(text: str) -> list[str]:
