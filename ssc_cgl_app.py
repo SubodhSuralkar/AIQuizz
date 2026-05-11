@@ -349,9 +349,13 @@ hr { border-color: var(--border) !important; }
 
 # ── Session state init ────────────────────────────────────────────────────────
 def init_session():
+   # 1. Try to get the key from Streamlit Secrets first
+    # 2. If it's not there, default to empty string
+    initial_key = st.secrets.get("GEMINI_API_KEY", "")
+    
     defaults = {
-        "api_key": "",
-        "api_key_valid": False,
+        "api_key": initial_key,
+        "api_key_valid": True if initial_key else False, # Assume true if present
         "full_text": "",
         "topics": [],
         "selected_topic": None,
@@ -406,13 +410,18 @@ def extract_text_from_pdfs(uploaded_files) -> tuple[str, list[str]]:
 
 
 # ── Helper: validate API key ──────────────────────────────────────────────────
-def validate_api_key(key: str) -> bool:
+import google.generativeai as genai
+
+def validate_api_key(key):
     try:
         genai.configure(api_key=key)
         model = genai.GenerativeModel("gemini-1.5-flash")
-        model.generate_content("Hi", generation_config={"max_output_tokens": 5})
+        # We perform a tiny 'ping' request to see if the key works
+        response = model.generate_content("ping")
         return True
-    except Exception:
+    except Exception as e:
+        # This will print the real error in your Streamlit logs
+        st.sidebar.error(f"Error: {str(e)}") 
         return False
 
 
